@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>English Vocabulary Flashcards | A1–C2 Knowledge Scale</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Inter', 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f5f7fc 0%, #e9eef4 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        .app-container {
+            max-width: 850px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(2px);
+            border-radius: 3.5rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .score-panel {
+            background: #1e2b3c;
+            padding: 1.2rem 1.8rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            border-bottom: 3px solid #ffb74d;
+        }
+
+        .score-stats {
+            display: flex;
+            gap: 1.8rem;
+            background: #0f1a24;
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+        }
+
+        .stat {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .stat span {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: #ffcd7e;
+            margin-left: 6px;
+        }
+
+        .level-badge {
+            background: #ffb74d;
+            color: #1e2b3c;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .accuracy {
+            font-size: 0.85rem;
+            background: #00000044;
+            border-radius: 30px;
+            padding: 0.2rem 0.8rem;
+        }
+
+        .flashcard {
+            padding: 2rem 2rem 1rem 2rem;
+            text-align: center;
+        }
+
+        .image-frame {
+            background: #fef9e8;
+            border-radius: 2.5rem;
+            padding: 1.8rem;
+            box-shadow: inset 0 1px 4px #0001, 0 12px 24px -12px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        .flashcard-img {
+            max-width: 100%;
+            max-height: 280px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 1.8rem;
+            background: #fff0db;
+        }
+
+        .placeholder-note {
+            font-size: 0.8rem;
+            color: #a1622b;
+            margin-top: 8px;
+            background: #fff0d0;
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+        }
+
+        /* 4‑button grid layout */
+        .choices-area {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 1rem;
+            padding: 0.5rem 2rem 1.5rem 2rem;
+        }
+
+        .choice-btn {
+            background: white;
+            border: none;
+            padding: 0.9rem 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 60px;
+            box-shadow: 0 5px 0 #b0a28a;
+            cursor: pointer;
+            transition: all 0.08s linear;
+            background: #fffaf2;
+            color: #2c3e2f;
+            border: 1px solid #e2d9cc;
+        }
+
+        .choice-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #9b8e76;
+        }
+
+        .choice-btn:disabled {
+            opacity: 0.6;
+            transform: translateY(0);
+            cursor: not-allowed;
+            filter: grayscale(0.05);
+        }
+
+        .feedback-area {
+            background: #e9e2d4;
+            margin: 0 1.8rem 1rem 1.8rem;
+            border-radius: 2rem;
+            padding: 0.8rem 1.2rem;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #2c3a2b;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .correct-word-message {
+            background: #2c3e2f;
+            color: #ffe5b4;
+            padding: 0.3rem 1rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .reset-btn {
+            border: none;
+            font-weight: 700;
+            padding: 0.5rem 1.4rem;
+            border-radius: 3rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            background: #9e7e5e;
+            color: white;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #7a5e44;
+            transform: scale(0.97);
+        }
+
+        .auto-timer {
+            font-size: 0.8rem;
+            background: #d9cdb0;
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            color: #2c3a2b;
+        }
+
+        hr {
+            margin: 0 2rem 1rem;
+            border-color: #ddd2c0;
+        }
+
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            padding: 0.8rem;
+            color: #5f6c6b;
+            background: #f1ede6;
+        }
+
+        @media (max-width: 600px) {
+            .choices-area {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.8rem;
+            }
+            .choice-btn {
+                font-size: 1rem;
+                padding: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="score-panel">
+        <div class="score-stats">
+            <div class="stat">✅ CORRECT: <span id="correctCount">0</span></div>
+            <div class="stat">🎯 TOTAL: <span id="totalAttempts">0</span></div>
+        </div>
+        <div class="level-badge" id="levelBadge">A1</div>
+        <div class="accuracy" id="accuracyPercent">0% accuracy</div>
+    </div>
+
+    <div class="flashcard">
+        <div class="image-frame">
+            <img id="flashImage" class="flashcard-img" src="" alt="Vocabulary card image" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\' viewBox=\'0 0 24 24\' fill=\'%23c0a080\'%3E%3Cpath d=\'M4 4h16v16H4z\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23855e3a\' font-size=\'12\'%3E? image%3C/text%3E%3C/svg%3E';">
+            <div class="placeholder-note"></div>
+        </div>
+    </div>
+
+    <div class="choices-area" id="choicesContainer">
+        <!-- 4 buttons will be injected dynamically -->
+    </div>
+
+    <div class="feedback-area">
+        <div id="feedbackMsg">✨ Tap a button to answer ✨</div>
+        <div class="correct-word-message" id="correctWordDisplay">📖 word will appear here</div>
+    </div>
+
+    <div style="display: flex; justify-content: center; padding: 0 1.8rem 1rem 1.8rem;">
+        <button class="reset-btn" id="resetStatsBtn">🔄 Reset Score &amp; Keep Card</button>
+    </div>
+    <hr>
+    <footer>⭐ Each answer updates your CEFR level (A1 → C2). After answering, next card loads in 3 seconds.</footer>
+</div>
+
+<script>
+    // ----------------------------- FLASHCARD DATABASE ---------------------------------
+    let flashcards = [
+        { image: "apple.png", word: "Apple" },
+        { image: "carrot.jpg", word: "Carrot" },
+        { image: "potato.jpg", word: "Potato" },
+        { image: "tomato.jpg", word: "Tomato" },
+        { image: "onion.jpg", word: "Onion" },
+        { image: "lettuce.jpg", word: "Lettuce" },
+        { image: "corn.jpg", word: "Corn" },
+        { image: "pea.jpg", word: "Pea" },
+        { image: "bean.jpg", word: "Bean" },
+        { image: "cucumber.jpg", word: "Cucumber" },
+        { image: "pepper.jpg", word: "Pepper" },
+        { image: "spinach.jpg", word: "Spinach" },
+        { image: "cabbage.jpg", word: "Cabbage" },
+        { image: "garlic.jpg", word: "Garlic" },
+        { image: "pumpkin.jpg", word: "Pumpkin" },
+        { image: "zucchini.jpg", word: "Zucchini" },
+        { image: "eggplant.jpg", word: "Eggplant" },
+        { image: "broccoli.jpg", word: "Broccoli" },
+        { image: "cauliflower.jpg", word: "Cauliflower" },
+        { image: "radish.jpg", word: "Radish" },
+        { image: "leek.jpg", word: "Leek" },
+        { image: "asparagus.jpg", word: "Asparagus" },
+        { image: "artichoke.jpg", word: "Artichoke" },
+        { image: "beetroot.jpg", word: "Beetroot" },
+        { image: "celery.jpg", word: "Celery" },
+        { image: "turnip.jpg", word: "Turnip" },
+        { image: "parsnip.jpg", word: "Parsnip" },
+        { image: "brussels-sprouts.jpg", word: "Brussels sprouts" },
+        { image: "kale.jpg", word: "Kale" },
+        { image: "swiss-chard.jpg", word: "Swiss chard" },
+        { image: "endive.jpg", word: "Endive" },
+        { image: "car.png", word: "Car" },
+        { image: "dog.png", word: "Dog" },
+        { image: "cat.jpg", word: "Cat" },
+        { image: "sun.jpg", word: "Sun" },
+        { image: "moon.jpg", word: "Moon" },
+        { image: "house.jpg", word: "House" },
+        { image: "barn.jpg", word: "Barn" },
+        { image: "bird.jpg", word: "Bird" },
+        { image: "fish.jpg", word: "Fish" },
+        { image: "flower.jpg", word: "Flower" }
+    ];
+
+    // ---------- RANDOM SHUFFLE ON LOAD (time‑seeded) ----------
+    function shuffleArrayRandomly(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+    flashcards = shuffleArrayRandomly(flashcards);
+
+    // Master word list for generating distractors
+    const allWordsList = flashcards.map(card => card.word);
+
+    // ---------- GAME STATE ----------
+    let currentIndex = 0;
+    let correctCount = 0;
+    let totalAttempts = 0;
+    let isAnswered = false;
+    let currentCorrectWord = "";
+    let currentChoices = [];            // 4 options (strings)
+    let autoNextTimeout = null;         // timeout handle for automatic next card
+
+    // DOM elements
+    const flashImage = document.getElementById('flashImage');
+    const choicesContainer = document.getElementById('choicesContainer');
+    const correctCountSpan = document.getElementById('correctCount');
+    const totalAttemptsSpan = document.getElementById('totalAttempts');
+    const levelBadge = document.getElementById('levelBadge');
+    const accuracyPercentSpan = document.getElementById('accuracyPercent');
+    const feedbackMsgDiv = document.getElementById('feedbackMsg');
+    const correctWordDisplaySpan = document.getElementById('correctWordDisplay');
+    const resetStatsBtn = document.getElementById('resetStatsBtn');
+
+    // Helper: get N unique random distractors (different from correctWord and each other)
+    function getUniqueRandomDistractors(correctWord, count) {
+        // filter out the correct word
+        let candidates = allWordsList.filter(word => word !== correctWord);
+        // if not enough unique words, fallback to adding generic terms
+        if (candidates.length < count) {
+            const fallbacks = ["Object", "Thing", "Item", "Picture"];
+            for (let fb of fallbacks) {
+                if (!candidates.includes(fb) && fb !== correctWord) candidates.push(fb);
+                if (candidates.length >= count) break;
+            }
+        }
+        // Shuffle candidates and take first 'count'
+        for (let i = candidates.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+        }
+        return candidates.slice(0, count);
+    }
+
+    // Generate 4 options: correct + 3 unique distractors, then shuffle
+    function generateFourOptions(correctWord) {
+        const distractors = getUniqueRandomDistractors(correctWord, 3);
+        let opts = [correctWord, ...distractors];
+        // Fisher-Yates shuffle
+        for (let i = opts.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [opts[i], opts[j]] = [opts[j], opts[i]];
+        }
+        return opts;
+    }
+
+    // Dynamically create 4 buttons (or reuse existing ones)
+    function rebuildChoiceButtons(choicesArray) {
+        choicesContainer.innerHTML = "";
+        for (let i = 0; i < choicesArray.length; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.textContent = choicesArray[i];
+            btn.addEventListener('click', () => {
+                if (!isAnswered && btn.textContent !== "—") {
+                    handleAnswer(btn.textContent);
+                }
+            });
+            choicesContainer.appendChild(btn);
+        }
+    }
+
+    function enableButtons(enable) {
+        const btns = document.querySelectorAll('.choice-btn');
+        btns.forEach(btn => {
+            if (enable) btn.disabled = false;
+            else btn.disabled = true;
+        });
+    }
+
+    // Cancel any pending auto-next timer
+    function cancelAutoNext() {
+        if (autoNextTimeout) {
+            clearTimeout(autoNextTimeout);
+            autoNextTimeout = null;
+        }
+    }
+
+    // Automatically move to next card after delay
+    function scheduleAutoNext() {
+        cancelAutoNext();
+        autoNextTimeout = setTimeout(() => {
+            if (isAnswered) {
+                goToNextCard();
+            }
+            autoNextTimeout = null;
+        }, 3000);
+    }
+
+    // Load a specific card by index
+    function loadCard(index) {
+        const card = flashcards[index];
+        if (!card) return;
+        
+        flashImage.src = card.image;
+        flashImage.alt = `Flashcard: ${card.word}`;
+        currentCorrectWord = card.word;
+        
+        // Generate 4 options
+        currentChoices = generateFourOptions(currentCorrectWord);
+        rebuildChoiceButtons(currentChoices);
+        
+        isAnswered = false;
+        enableButtons(true);
+        
+        // Reset feedback and correct word display
+        feedbackMsgDiv.innerHTML = "🤔 Which word matches the picture?";
+        correctWordDisplaySpan.innerHTML = "🔍 answer after selection";
+        
+        // Cancel any pending auto-next (fresh card)
+        cancelAutoNext();
+    }
+    
+    // Compute accuracy and CEFR level (A1–C2)
+    function computeAccuracyAndLevel() {
+        if (totalAttempts === 0) return { accuracy: 0, level: "A1" };
+        const accuracy = (correctCount / totalAttempts) * 100;
+        let level = "";
+        if (accuracy <= 15) level = "A1";
+        else if (accuracy <= 30) level = "A2";
+        else if (accuracy <= 45) level = "B1";
+        else if (accuracy <= 60) level = "B2";
+        else if (accuracy <= 84) level = "C1";
+        else level = "C2";
+        return { accuracy, level };
+    }
+    
+    function updateScoreUI() {
+        correctCountSpan.textContent = correctCount;
+        totalAttemptsSpan.textContent = totalAttempts;
+        const { accuracy, level } = computeAccuracyAndLevel();
+        accuracyPercentSpan.textContent = `${Math.round(accuracy)}% accuracy`;
+        levelBadge.textContent = level;
+        if (level === "C2") levelBadge.style.background = "#ffd966";
+        else if (level === "C1") levelBadge.style.background = "#ffe0a3";
+        else levelBadge.style.background = "#ffb74d";
+    }
+    
+    function displayCorrectWordAndFeedback(isUserCorrect, selectedWord) {
+        correctWordDisplaySpan.innerHTML = `📖 CORRECT WORD: ${currentCorrectWord}`;
+        if (isUserCorrect) {
+            feedbackMsgDiv.innerHTML = `✅ Great! "${selectedWord}" is right! +1 point. Next card in 3s...`;
+        } else {
+            feedbackMsgDiv.innerHTML = `❌ Oops! "${selectedWord}" is wrong. The correct word is "${currentCorrectWord}". Next card in 3s...`;
+        }
+    }
+    
+    function handleAnswer(selectedWord) {
+        if (isAnswered) {
+            feedbackMsgDiv.innerHTML = "⏳ Already answered! Wait for next card.";
+            return;
+        }
+        
+        const isCorrect = (selectedWord === currentCorrectWord);
+        totalAttempts++;
+        if (isCorrect) correctCount++;
+        isAnswered = true;
+        
+        updateScoreUI();
+        displayCorrectWordAndFeedback(isCorrect, selectedWord);
+        
+        // Disable all choice buttons
+        enableButtons(false);
+        
+        // Schedule automatic transition to next card
+        scheduleAutoNext();
+    }
+    
+    // Move to next card (cyclic through shuffled deck)
+    function goToNextCard() {
+        cancelAutoNext();          // clear any pending timer
+        currentIndex = (currentIndex + 1) % flashcards.length;
+        loadCard(currentIndex);
+    }
+    
+    // Reset score only (keep current card, re-enable answering, clear timers)
+    function resetScoreOnly() {
+        cancelAutoNext();          // stop any pending auto-next
+        correctCount = 0;
+        totalAttempts = 0;
+        isAnswered = false;
+        
+        // Re-generate fresh options for the same card
+        if (flashcards[currentIndex]) {
+            currentCorrectWord = flashcards[currentIndex].word;
+            currentChoices = generateFourOptions(currentCorrectWord);
+            rebuildChoiceButtons(currentChoices);
+        }
+        
+        enableButtons(true);
+        feedbackMsgDiv.innerHTML = "🔄 Score reset! Answer this card to start fresh.";
+        correctWordDisplaySpan.innerHTML = "🔍 answer to reveal correct word";
+        updateScoreUI();
+    }
+    
+    // Initialization
+    function initApp() {
+        if (flashcards.length === 0) return;
+        currentIndex = 0;
+        correctCount = 0;
+        totalAttempts = 0;
+        isAnswered = false;
+        
+        loadCard(currentIndex);
+        updateScoreUI();
+        
+        resetStatsBtn.addEventListener('click', () => {
+            resetScoreOnly();
+        });
+        
+        // Image fallback
+        flashImage.onerror = () => {
+            flashImage.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\' viewBox=\'0 0 24 24\' fill=\'%23d4b48c\'%3E%3Crect width=\'100%25\' height=\'100%25\' fill=\'%23f2e0c9\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%23945e2e\' font-size=\'12\'%3E⚠️ missing image%3C/text%3E%3C/svg%3E';
+        };
+    }
+    
+    initApp();
+</script>
+</body>
+</html>
