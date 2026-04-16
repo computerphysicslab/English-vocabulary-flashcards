@@ -1,34 +1,75 @@
-# English Vocabulary Flashcards – CEFR Knowledge Scale
+# 📚 English Vocabulary Flashcards: CEFR Knowledge Scale
 
-An interactive web‑based flashcard app that helps learners build English vocabulary. Each card shows an image; the user must choose the correct English word from **4 options**. The score adapts in real time, and the user’s proficiency is displayed on the **A1 → C2** scale (Common European Framework of Reference for Languages).
+An interactive, browser-based flashcard application designed to help learners master English vocabulary through visual association. The app features an adaptive scoring system that maps user accuracy to the **CEFR (A1–C2)** scale in real-time.
 
-After answering, the next card loads **automatically after 3 seconds** – no need to click “Next”. The order of flashcards is **randomised on every page load** (time‑seeded shuffle), ensuring a fresh experience each session.
+## 🚀 Key Features
 
-## Features
+* **Dynamic Choice Generation:** Every card presents the correct answer plus three unique distractors pulled randomly from the database.
+* **Intelligent Progression:** Features a hands-free experience with a **3-second automatic transition** to the next card after an answer is selected.
+* **Adaptive CEFR Leveling:** A custom algorithm calculates proficiency level based on cumulative accuracy, ranging from A1 (Beginner) to C2 (Mastery).
+* **Randomized Experience:** Uses a **Fisher-Yates shuffle** on page load to ensure the deck order is unique every session.
+* **Robust Error Handling:** Includes SVG placeholders for missing images to ensure the UI remains clean even if local assets are disconnected.
+* **Responsive UI:** Optimized for all devices using a flexible CSS layout that adapts from a wide view to a 2×2 mobile-friendly grid.
 
-- **4‑choice answers** – One correct word + three unique distractors.
-- **Automatic card progression** – 3‑second delay after each answer.
-- **CEFR level tracking** – Accuracy from 0% → 100% maps to A1, A2, B1, B2, C1, C2.
-- **Score system** – Correct answer: +1 point; wrong answer: score unchanged (only total attempts increase).
-- **Randomised card order** – Fisher‑Yates shuffle seeded by `Math.random()` (time‑based) on every page reload.
-- **Local image support** – Place your `.jpg` / `.png` files in the same directory as the HTML file.
-- **Responsive design** – Works on desktop, tablet, and mobile (2×2 button grid on narrow screens).
-- **Reset button** – Resets score without changing the current card.
+---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-| Technology | Purpose |
-|------------|---------|
-| HTML5 | Structure and semantic markup |
-| CSS3 | Responsive layout, gradients, shadows, animations |
-| Vanilla JavaScript (ES6) | Game logic, state management, DOM manipulation, timer handling |
-| Local file system | Images stored alongside the HTML file (no backend required) |
+| Component | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Structure** | HTML5 | Semantic markup and structure |
+| **Styling** | CSS3 | Responsive layout, gradients, and animations |
+| **Logic** | Vanilla JavaScript | Game logic, state management, and timers |
+| **Assets** | Local Images | Image files stored in the directory with SVG fallbacks |
 
-No external libraries or frameworks – pure static web app.
+*Zero dependencies. No frameworks, no libraries, just pure web standards.*
 
-## Installation & Usage
+---
 
-1. **Clone the repository**  
-   ```bash
-   git clone https://github.com/your-username/english-flashcards.git
-   cd english-flashcards
+## 📊 The Knowledge Scale
+
+The app tracks your performance across all attempts to determine your standing on the Common European Framework of Reference for Languages:
+
+| Accuracy Range | CEFR Level | Description |
+| :--- | :--- | :--- |
+| 0% – 15% | **A1** | Beginner |
+| 16% – 30% | **A2** | Elementary |
+| 31% – 45% | **B1** | Intermediate |
+| 46% – 60% | **B2** | Upper Intermediate |
+| 61% – 84% | **C1** | Advanced |
+| 85% – 100% | **C2** | Mastery |
+
+---
+
+## 📂 Installation & Setup
+
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/your-username/english-flashcards.git
+    cd english-flashcards
+    ```
+
+2.  **Add Your Images**
+    Ensure your vocabulary images (e.g., `apple.png`, `carrot.jpg`) are placed in the root directory or update the paths in the `flashcards` array within `index.html`.
+
+3.  **Launch the App**
+    Simply double-click `index.html` to open it in any modern web browser.
+
+---
+
+## ⚙️ Customization
+
+To add your own words, locate the `flashcards` array in the `<script>` tag within `index.html`:
+
+```javascript
+let flashcards = [
+    { image: "your-image.jpg", word: "Your Word" },
+    // Add more objects here
+];
+```
+
+## 📝 License
+This project is open-source and available under the **MIT License**.
+
+---
+*Developed to make language learning visual, fast, and fun.*
