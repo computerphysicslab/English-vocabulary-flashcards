@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>English Vocabulary Flashcards | A1–C2 Knowledge Scale</title>
+    <title>English Vocabulary Flashcards | A1–C2 Knowledge Scale (Offset Scoring)</title>
     <style>
         * {
             margin: 0;
@@ -252,32 +252,29 @@
         <button class="reset-btn" id="resetStatsBtn">🔄 Reset Score &amp; Keep Card</button>
     </div>
     <hr>
-    <footer>⭐ Each answer updates your CEFR level (A1 → C2). After answering, next card loads in 3 seconds.</footer>
+    <footer>⭐ Level is based on effective score = (correct answers − 2), clamped to 0. 10/10 correct gives 80% → C1 (instead of C2).</footer>
 </div>
 
 <script>
     // ----------------------------- CONFIGURATION ---------------------------------
     const IMAGE_BASE_PATH = "pics/";
     const FLASHCARD_LIST_URL = "pics/flashcards.json";   // JSON file: array of image filenames (e.g. ["apple.jpg", "carrot.jpg"])
+    const SCORE_OFFSET = -2;   // negative offset: user starts with -2 effective points
 
     // Helper: convert filename (lowercase, hyphens) to a readable English word
-    // e.g. "brussel-sprouts.jpg" -> "Brussel Sprouts"
     function filenameToWord(filename) {
-        // Remove extension
         let name = filename.replace(/\.(jpg|jpeg|png|gif|webp)$/i, "");
-        // Replace hyphens with spaces
         name = name.replace(/-/g, " ");
-        // Capitalize each word
         name = name.split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
         return name;
     }
 
     // Global variables
-    let flashcards = [];          // will be filled dynamically
+    let flashcards = [];
     let allWordsList = [];
     let currentIndex = 0;
-    let correctCount = 0;
-    let totalAttempts = 0;
+    let correctCount = 0;        // raw number of correct answers
+    let totalAttempts = 0;        // raw number of answered cards
     let isAnswered = false;
     let currentCorrectWord = "";
     let currentChoices = [];
@@ -294,7 +291,7 @@
     const correctWordDisplaySpan = document.getElementById('correctWordDisplay');
     const resetStatsBtn = document.getElementById('resetStatsBtn');
 
-    // ---------- Helper functions (same as before) ----------
+    // ---------- Helper functions ----------
     function shuffleArrayRandomly(arr) {
         for (let i = arr.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -379,9 +376,13 @@
         cancelAutoNext();
     }
 
+    // ---------- SCORING WITH OFFSET ----------
     function computeAccuracyAndLevel() {
         if (totalAttempts === 0) return { accuracy: 0, level: "A1" };
-        const accuracy = (correctCount / totalAttempts) * 100;
+        // effective correct = raw correct + OFFSET (clamped to 0)
+        let effectiveCorrect = correctCount + SCORE_OFFSET;
+        if (effectiveCorrect < 0) effectiveCorrect = 0;
+        const accuracy = (effectiveCorrect / totalAttempts) * 100;
         let level = "";
         if (accuracy <= 15) level = "A1";
         else if (accuracy <= 30) level = "A2";
@@ -454,16 +455,14 @@
         try {
             const response = await fetch(FLASHCARD_LIST_URL);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const fileList = await response.json();  // expects an array of image filenames (e.g. ["apple.jpg", "carrot.jpg"])
+            const fileList = await response.json();
             if (!Array.isArray(fileList) || fileList.length === 0) throw new Error("Empty or invalid JSON");
             
-            // Convert filenames to { image, word } objects
             flashcards = fileList.map(filename => ({
                 image: filename,
                 word: filenameToWord(filename)
             }));
             
-            // Remove any duplicates (by image name)
             const seen = new Set();
             flashcards = flashcards.filter(card => {
                 if (seen.has(card.image)) return false;
@@ -473,11 +472,9 @@
             
             if (flashcards.length === 0) throw new Error("No valid images found");
             
-            // Shuffle the deck
             flashcards = shuffleArrayRandomly(flashcards);
             allWordsList = flashcards.map(card => card.word);
             
-            // Start the game
             currentIndex = 0;
             correctCount = 0;
             totalAttempts = 0;
@@ -488,12 +485,10 @@
             console.error("Failed to load flashcards.json:", error);
             choicesContainer.innerHTML = `<div class="loader" style="color:#b33;">⚠️ Could not load <code>${FLASHCARD_LIST_URL}</code>.<br>Please create this file in the "pics" folder with an array of image filenames.<br>Example: ["apple.jpg", "carrot.jpg"]</div>`;
             feedbackMsgDiv.innerHTML = "❌ Missing flashcard list. See instructions above.";
-            // Disable buttons
             enableButtons(false);
         }
     }
 
-    // ---------- Initialization ----------
     function initApp() {
         resetStatsBtn.addEventListener('click', resetScoreOnly);
         flashImage.onerror = () => {
