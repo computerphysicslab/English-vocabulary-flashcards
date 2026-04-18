@@ -43,6 +43,8 @@ The app tracks your performance across all attempts to determine your standing o
 
 ## 📂 Installation & Setup
 
+0. You may test the flashcard game just by openning the following URL on your browser: https://computerphysicslab.github.io/English-vocabulary-flashcards/
+
 1.  **Clone the Repository**
     ```bash
     git clone https://github.com/your-username/english-flashcards.git
